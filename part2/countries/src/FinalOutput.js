@@ -51,7 +51,7 @@ const Show = ({output, i}) => {
     const [temp, setTemp] = useState({});
     const city = output[i].capital;
     const api_key = "";
-    axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&APPID=1691935687f0f54aeecc176b544aab88`)
+    axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&APPID={api_key}`)
     .then((res) => setTemp(res.data))
 
 
