@@ -5,10 +5,20 @@ const FinalOutput = ({ check, filteredData, output }) => {
 
     const [showCheck, setShowCheck] = useState(false);
     const [index, setIndex] = useState(null);
+    const [temp, setTemp] = useState({});
+
 
     const handleOnClick = (i) => {
         setShowCheck(true);
         setIndex(i);
+
+        const city = output[i].capital;
+        const api_key = "1691935687f0f54aeecc176b544aab88";
+
+        axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&APPID=${api_key}`)
+        .then((res) => {
+            setTemp(res.data) 
+        })
     }
     
   if (check) {
@@ -16,7 +26,7 @@ const FinalOutput = ({ check, filteredData, output }) => {
   } else if (output.length === 1) {
     return (
       <>
-        <h1>{output[0].name}</h1>
+         <h1>{output[0].name}</h1>
         <br />
         <p>Capital: {output[0].capital}</p>
         <p>Population: {output[0].population}</p>
@@ -40,20 +50,18 @@ const FinalOutput = ({ check, filteredData, output }) => {
 
         <>
     {final}
-    {showCheck ? <Show output={output} i={index}/> : null}
+    {showCheck ? <Show output={output} i={index} temp={temp}/> : null}
 </>
     );
   }
 };
 
-const Show = ({output, i}) => {
+const Show = ({output, i, temp}) => {
 // The weather part is still incomplete
-    const [temp, setTemp] = useState({});
-    const city = output[i].capital;
-    const api_key = "";
-    axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&APPID=${api_key}`)
-    .then((res) => setTemp(res.data))
-
+    const temperature = temp.main ? temp.main.temp : 0;
+    const wind  = temp.main ? temp.wind.speed : 0;
+    const iconcode = temp.main ? temp.weather[0].icon : null;
+    const iconurl = "http://openweathermap.org/img/w/" + iconcode + ".png";
 
     return(
         <>
@@ -68,7 +76,11 @@ const Show = ({output, i}) => {
         </ul>
         <img src={output[i].flag} alt="flag"/>
         <br />
-<h2>Temperature: {temp.main.temp}</h2>
+        <h2>Temperature: {temperature} Celsius</h2>
+
+        <img src={iconurl} alt="weather"></img>
+
+      <h3>Wind: {wind} kph</h3>
 
         <div></div>
         </>
