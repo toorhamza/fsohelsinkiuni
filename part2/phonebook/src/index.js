@@ -41,7 +41,7 @@ const App = () => {
     })
     .then (() => fetchData())
     .catch(error => {
-      setMessage({message:'Error Occured!', type:'error'})
+      setMessage({message: error.response.data.error, type:'error'})
       setTimeout(() => {
         setMessage({message:'', type:''})
       }, 5000) 
