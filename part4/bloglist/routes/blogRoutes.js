@@ -1,61 +1,91 @@
-const router = require('express').Router()
-const Blog = require('../models/blogSchema')
+const router = require("express").Router();
+const Blog = require("../models/blogSchema");
+const User = require("../models/userSchema");
+const jwt = require("jsonwebtoken");
+const checkToken = require('../utils/checkTokenMiddleWare')
 
 
-router.get('/api/blogs', (request, response) => {
-    Blog
-      .find({})
-      .then(blogs => {
-        response.json(blogs)
-      })
-  })
+router.get("/api/blogs", (request, response) => {
+  Blog.find({})
+    .populate("user")
+    .then(blogs => {
+      response.json(blogs);
+    });
+});
+
+router.post("/api/blogs", checkToken, async (request, response, next) => {
+  try{
+  const decodedToken = request.decoded
+  const body = request.body;
+  var likes = request.body.likes;
+  if (!likes) {
+    request.body.likes = 0;
+  }
+
+  const title = request.body.title;
+  const url = request.body.url;
+
+  if (!title || !url) {
+    return response.status(400).json({
+      error: "data missing. check title and url"
+    });
+  }
+
+  const user = await User.findById(decodedToken.id);
+  console.log("======================User Object=============================")
+  console.log(user);
+
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
+    user: user._id
+  });
+
+  const savedBlog = await blog.save();
+  user.blogs = user.blogs.concat(savedBlog._id);
+  await user.save();
+  response.status(201).json(savedBlog.toJSON())(exception);
   
-  router.post('/api/blogs', (request, response) => {
-    var likes = request.body.likes
-    if (!likes){
-      request.body.likes = 0
-    }
+} catch (exception) {
+  next(exception);
+}
+});
 
-    const title = request.body.title
-    const url = request.body.url
-    
-    if (!title || !url) {
+router.delete("/api/blogs/:id", checkToken, async (request, response) => {
+  const id = request.params.id;
+  const user = request.decoded
+  //console.log(user)
+  const blogPost = (await Blog.findById(id)).toJSON()
+
+
+  if(blogPost.user.toString() === user.id.toString()) {
+    const remove = await Blog.findByIdAndRemove(id);
+    return response.status(204).end();
+
+    } else {
       return response.status(400).json({
-        "error": "data missing. check title and url"
+        "error": "invalid owner. This user can not delete this blogpost"
       })
     }
 
-    const blog = new Blog(request.body)
-  
-    blog
-      .save()
-      .then(result => {
-        response.status(201).json(result)
-      })
-  })
+});
 
-  router.delete('/api/blogs/:id', async (request, response) => {
-    const id = request.params.id
-    const remove = await Blog.findByIdAndRemove(id)
+router.put("/api/blogs/:id", async (request, response) => {
+  const id = request.params.id;
+  const body = request.body;
+  console.log(body);
+  const blog = {
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes
+  };
 
-      response.status(204).end()
+  const update = await Blog.findByIdAndUpdate(id, blog, { likes: body.likes });
 
-  })
+  response.json(update.toJSON());
+});
 
-  router.put('/api/blogs/:id', async (request, response) => {
-    const id = request.params.id
-    const body = request.body
-    console.log(body)
-    const blog = {
-    "title": body.title,
-    "author": body.author,
-    "url": body.url,
-    "likes": body.likes,
-    }
-
-    const update = await Blog.findByIdAndUpdate(id, blog, {likes: body.likes})
-
-    response.json(update.toJSON())
-  })
-
-  module.exports = router
+module.exports = router;
