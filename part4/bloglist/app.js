@@ -7,7 +7,7 @@ const config = require('./utils/config')
 const blogRoutes = require('./routes/blogRoutes')
 
 const mongoUrl = config.MONGODB_URI
-  mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
   .then(() => {
    console.log('Connected to ' + mongoUrl)
   })
