@@ -75,13 +75,15 @@ router.delete("/api/blogs/:id", checkToken, async (request, response) => {
 router.put("/api/blogs/:id", async (request, response) => {
   const id = request.params.id;
   const body = request.body;
-  console.log(body);
+
   const blog = {
     title: body.title,
     author: body.author,
     url: body.url,
     likes: body.likes
   };
+
+  console.log(blog)
 
   const update = await Blog.findByIdAndUpdate(id, blog, { likes: body.likes });
 
