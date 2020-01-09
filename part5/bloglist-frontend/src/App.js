@@ -7,6 +7,8 @@ import Message from "./components/Message";
 import LoggedIn from "./components/LoggedIn";
 import UserSubmittedBlogs from "./components/UserSubmittedBlogs";
 import Togglable from "./components/Togglable";
+import  { useField } from './hooks/index'
+
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -20,6 +22,17 @@ const App = () => {
     url: "",
     likes: 0
   });
+
+  //Custom Hooks
+  let users = useField('text')
+  let pass = useField('text')
+
+   // destructuring and taking out reset value for form because it gives warning
+   var { reset, ...finalUsers } = users
+   var { reset, ...finalPass } = pass
+
+   console.log(finalUsers)
+   console.log(finalPass)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedNoteappUser");
@@ -52,12 +65,16 @@ const App = () => {
     console.log(
       `logging in with ${username} username and ${password} password `
     );
-
+      var u = users.value
+      var p = pass.value
     try {
       const user = await loginService.login({
-        username,
-        password
-      });
+        username: u, 
+        password: p
+      })
+      console.log(`${u} and ${p}` )
+      users.reset()
+      pass.reset()
 
       window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user));
 
@@ -103,19 +120,33 @@ const App = () => {
       }, 5000);
     }
   };
-
+ 
+  
   return (
     <>
       <Message Message={message} />
       <h1> Login to Application </h1>
       {user === null ? (
-        <Login
+        <form onSubmit={handleLogin}>
+        <label>
+          Username:
+          <input {...finalUsers}/>
+        </label>
+        <br />
+        <label>
+          Password:
+          <input {...finalPass}/>
+        </label>
+        <br />
+        <input type="submit" value="login" />
+      </form>
+        /* <Login
           handleLogin={handleLogin}
           handleUsername={handleUsername}
           handlePassword={handlePassword}
           username={username}
           password={password}
-        />
+        /> */
       ) : (
         <LoggedIn user={user} handleLogOut={handleLogOut} />
       )}

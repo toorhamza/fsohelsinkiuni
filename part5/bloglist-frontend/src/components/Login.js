@@ -10,7 +10,7 @@ const Login = (props) => {
       <br />
       <label>
         Password:
-        <input type="text" name="username" value={props.password} onChange={props.handlePassword}/>
+        <input type="text" name="password" value={props.password} onChange={props.handlePassword}/>
       </label>
       <br />
       <input type="submit" value="login" />
