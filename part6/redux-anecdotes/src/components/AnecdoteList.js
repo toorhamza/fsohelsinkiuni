@@ -1,27 +1,28 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { vote, setNotification, notificationRemover } from '../reducers/anecdoteReducer'
 
-const AnecdoteList = ({store}) => {
+const AnecdoteList = (props) => {
+/* const AnecdoteList = ({store}) => { */
 
-    const anecdotes = store.getState().anecdote
-    const filter = store.getState().filter
+  const anecdotes = props.anecdotes
+  const filter = props.filter
 
-    const vote = (id) => {
-        const action = {type: "VOTE", id: id}
-        store.dispatch(action)
-      }
+  console.log(anecdotes)
 
-      const notificationAction = (id) => {
-        const action = {type: "NOTIFICATION", data: "you voted"}
-        store.dispatch(action)
-
-        setTimeout(function(){
-          const otherAction = {type: "NOTIFICATION", data: ""}
-          store.dispatch(otherAction)
-
-      }, 5000);
-      }
+  /*   const anecdotes = store.getState().anecdote
+    const filter = store.getState().filter */
 
       const list = !filter ? anecdotes : filter
+
+      const handleButton = (id, votes, content) => {
+        const vo = votes + 1
+        
+        props.vote(id, content, vo)
+        props.setNotification(content, 5)
+
+        
+      }
 
     return (
         <>
@@ -33,9 +34,7 @@ const AnecdoteList = ({store}) => {
             </div>
             <div>
               has {anecdote.votes}
-              <button onClick={() => {vote(anecdote.id)
-              notificationAction(anecdote.id)
-              }}>vote</button>
+              <button onClick={() => handleButton(anecdote.id, anecdote.votes, anecdote.content)}>vote</button>
             </div>
           </div>
         )}
@@ -43,4 +42,20 @@ const AnecdoteList = ({store}) => {
     )
 }
 
-export default AnecdoteList
+const mapStateToProps = (state) => {
+  return {
+    anecdotes: state.anecdote,
+    filter: state.filter,
+  }
+}
+
+
+const mapDispatchToProps = {
+  vote,
+  setNotification,
+  notificationRemover
+}
+ 
+
+const ConnectedAnecdotes = connect(mapStateToProps, mapDispatchToProps)(AnecdoteList)
+export default ConnectedAnecdotes

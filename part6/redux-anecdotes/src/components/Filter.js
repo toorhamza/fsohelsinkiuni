@@ -1,19 +1,18 @@
 import React from 'react'
+import { filterAction } from '../reducers/anecdoteReducer'
+import { connect } from 'react-redux'
 
-const Filter = ({store}) => {
 
-    const filterAction = (filterData) => {
-        const action = {type: "FILTER", data: filterData}
-        store.dispatch(action)
-      }
+const Filter = (props) => {
+
   const handleChange = (event) => {
     // input-field value is in variable event.target.value
     const keyword = event.target.value
     console.log(keyword)
-    const anecdotes = store.getState().anecdote
+    const anecdotes = props.anecdote
     const filter = anecdotes.filter(anec => anec.content.toLowerCase().indexOf(event.target.value.toLowerCase()) !== -1)
     console.log(filter)
-    filterAction(filter)
+    props.filterAction(filter)
   }
   const style = {
     marginBottom: 10
@@ -28,4 +27,15 @@ const Filter = ({store}) => {
   )
 }
 
-export default Filter
+const mapStateToProps = state => {
+    return {
+      anecdote: state.anecdote
+    }
+  }
+  
+  const mapDispatchToProps = {
+    filterAction
+  }
+  
+
+export default connect(mapStateToProps, mapDispatchToProps)(Filter)
