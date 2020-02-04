@@ -84,17 +84,6 @@ let books = [
   }
 ];
 
-/* const allBooks = []
-const bookCount = () => {
-  const allAuthors = authors.map(o => o.name)
-  let i = 0
-  while (i<authorNames.length) {
-    console.log("its working")
-  }
-
-
-bookCount() */
-
 const typeDefs = gql`
   type Book {
     title: String!
@@ -118,7 +107,7 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks: [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
     allAuthors: [allAuthor!]!
   }
 `;
@@ -127,7 +116,21 @@ const resolvers = {
   Query: {
     bookCount: () => books.length,
     authorCount: () => authors.length,
-    allBooks: () => books,
+    allBooks: (root, args) => {
+      const authorBooks = books.filter((o) => args.author ? o.author === args.author : o.author !== args.author)
+      const genreBooks = books.filter((o) => args.genre ? o.genres.find(ob => {return args.genre === ob}) === args.genre : null)
+      const bothParams = args.genre && args.author ? authorBooks.filter(o => o.genres.find(ob => {return args.genre === ob}) === args.genre) : null
+      
+      if (args.author && args.genre) {
+        return bothParams
+      } else if (args.author) {
+        return authorBooks
+      } else if (args.genre) {
+        return genreBooks
+      } else {
+        return authorBooks
+      }
+    },
     allAuthors: () => {
       const authorNames = authors.map(o => o.name);
       const bookCountWithAuthors = [];
