@@ -103,6 +103,7 @@ const typeDefs = gql`
 
   type allAuthor {
     name: String!
+    born: Int
     bookCount: Int!
   }
 
@@ -151,6 +152,7 @@ const resolvers = {
     },
     allAuthors: () => {
       const authorNames = authors.map(o => o.name);
+      const authorsBorn = authors.map(o => o.born)
       const bookCountWithAuthors = [];
       for (let i = 0; i < authorNames.length; i++) {
         var count = 0;
@@ -163,6 +165,7 @@ const resolvers = {
         }
         const object = {
           name: authorNames[i],
+          born: authorsBorn[i],
           bookCount: count
         };
         bookCountWithAuthors.push(object);
