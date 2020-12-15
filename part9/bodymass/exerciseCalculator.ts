@@ -8,6 +8,22 @@ interface Result {
     average: number
 }
 
+const valuesParse = (args: Array<string>) => {
+    let validateNumbers = args.slice(2).map((i) => parseInt(i)).includes(NaN)
+    let target = Number(args.slice(2).shift())
+    let hours = args.slice(3).map(i => parseInt(i))
+    console.log(hours)
+
+  if (!validateNumbers) {
+    return {
+        hours: hours,
+        target: target
+    }
+  } else {
+    throw new Error('Provided values were not numbers!');
+  }
+}
+
 const exerciseCalculator = (hours: Array<number>, target: number): Result => {
     let periodLength: number = hours.length
     let trainingDays: number = 0
@@ -31,4 +47,11 @@ const exerciseCalculator = (hours: Array<number>, target: number): Result => {
 
 }
 
-console.log(exerciseCalculator([3, 0, 2, 4.5, 0, 3, 1], 2))
+try {
+    const {hours, target } = valuesParse(process.argv)
+    console.log(exerciseCalculator(hours, target))
+
+} catch (e) {
+    console.log(e.message)
+}
+

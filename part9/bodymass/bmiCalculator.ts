@@ -1,9 +1,25 @@
 type result = "healthy weight" | "over weight" | "under weight";
 
-const calculateBmi = (height: number, weight: number): result => {
-  if (height <= 0) throw new Error("Height should be a number");
-  if (weight <= 0) throw new Error("Weight should be a number");
+interface values {
+  height: number,
+  weight: number
+}
 
+const parseValues = (args: Array<string>): values => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+  if (args.length > 4) throw new Error('Too many arguments');
+
+  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
+    return {
+      height: Number(args[2]),
+      weight: Number(args[3])
+    }
+  } else {
+    throw new Error('Provided values were not numbers!');
+  }
+}
+
+const calculateBmi = (height: number, weight: number): result => {
   var BMI = weight / (((height / 100) * height) / 100);
 
   if (BMI < 18.5) {
@@ -17,8 +33,8 @@ const calculateBmi = (height: number, weight: number): result => {
   }
 };
 try {
-    console.log(calculateBmi(180, 74))
-
+  const {height, weight} = parseValues(process.argv);
+  console.log(calculateBmi(height, weight))
 } catch(e) {
     console.log(e.message)
 }
