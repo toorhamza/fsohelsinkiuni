@@ -9,10 +9,9 @@ interface Result {
 }
 
 const valuesParse = (args: Array<string>) => {
-    let validateNumbers = args.slice(2).map((i) => parseInt(i)).includes(NaN)
-    let target = Number(args.slice(2).shift())
-    let hours = args.slice(3).map(i => parseInt(i))
-    console.log(hours)
+    let validateNumbers: boolean = args.slice(2).map((i) => parseInt(i)).includes(NaN)
+    let target: number = Number(args.slice(2).shift())
+    let hours: Array<number> = args.slice(3).map(i => parseInt(i))
 
   if (!validateNumbers) {
     return {
