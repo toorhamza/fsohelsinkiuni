@@ -1,149 +1,11 @@
 import React, { useState } from "react";
-import {
-  useParams, useHistory,
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect,
-} from "react-router-dom";
-
-const Menu = () => {
-  const padding = {
-    paddingRight: 5,
-  };
-  return (
-    <div>
-      <Link style={padding} to="/">
-        anecdotes
-      </Link>
-      <Link style={padding} to="/addNew">
-        create new
-      </Link>
-      <Link style={padding} to="/about">
-        about
-      </Link>
-    </div>
-  );
-};
-
-const AnecdoteList = ({ anecdotes }) => {
-  return (
-    <div>
-      <h2>Anecdotes</h2>
-      <ul>
-        {anecdotes.map((anecdote) => (
-          <li key={anecdote.id}>
-            <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const Anecdote = ({ anecdotes }) => {
-  const id = useParams().id;
-  const anecdote = anecdotes.find((n) => n.id == Number(id));
-  console.log(anecdote)
-  return (
-    <div>
-      <h2>{anecdote.content}</h2>
-      <div>{anecdote.author}</div>
-      <div>{anecdote.info}</div>
-    </div>
-  );
-};
-
-const About = () => (
-  <div>
-    <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
-
-    <em>
-      An anecdote is a brief, revealing account of an individual person or an
-      incident. Occasionally humorous, anecdotes differ from jokes because their
-      primary purpose is not simply to provoke laughter but to reveal a truth
-      more general than the brief tale itself, such as to characterize a person
-      by delineating a specific quirk or trait, to communicate an abstract idea
-      about a person, place, or thing through the concrete details of a short
-      narrative. An anecdote is "a story with a point."
-    </em>
-
-    <p>
-      Software engineering is full of excellent anecdotes, at this app you can
-      find the best and add more.
-    </p>
-  </div>
-);
-
-const Footer = () => (
-  <div>
-    Anecdote app for{" "}
-    <a href="https://courses.helsinki.fi/fi/tkt21009">
-      Full Stack -websovelluskehitys
-    </a>
-    . See{" "}
-    <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
-      https://github.com/fullstack-hy2019/routed-anecdotes/blob/master/src/App.js
-    </a>{" "}
-    for the source code.
-  </div>
-);
-
-const CreateNew = (props) => {
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
-
-  const history = useHistory()
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    props.addNew({
-      content,
-      author,
-      info,
-      votes: 0,
-    });
-    history.push('/')
-    props.handleNotification()
-
-  };
-
-  return (
-    <div>
-      <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          content
-          <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-        </div>
-        <div>
-          author
-          <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
-        </div>
-        <div>
-          url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
-        </div>
-        <button>create</button>
-      </form>
-    </div>
-  );
-};
+import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import Menu from "./components/Menu";
+import AnecdoteList from "./components/AnecdoteList";
+import Anecdote from "./components/Anecdote";
+import About from './components/About'
+import Footer from './components/Footer'
+import CreateNew from './components/CreateNew'
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -183,42 +45,41 @@ const App = () => {
   };
 
   const handleNotification = () => {
-    setNotification("Anecdote Added Successfully")
+    setNotification("Anecdote Added Successfully");
     setTimeout(() => {
-      setNotification("")
-    }, 10000)
-  }
+      setNotification("");
+    }, 10000);
+  };
 
   const routes = (
-    <Router>
-      <div>
-        <Menu />
-        <Switch>
+    <div>
+      <Menu />
+      <Switch>
         <Route path="/anecdotes/:id">
-            <Anecdote anecdotes={anecdotes} />
-          </Route>
-          <Route path="/addNew">
-            <CreateNew addNew={addNew} handleNotification={handleNotification} />
-          </Route>
-          <Route path="/about">
-            <About />
-          </Route>
-          <Route path="/">
-            <AnecdoteList anecdotes={anecdotes} />
-          </Route>
-
-        </Switch>
-      </div>
-    </Router>
+          <Anecdote anecdotes={anecdotes} />
+        </Route>
+        <Route path="/addNew">
+          <CreateNew addNew={addNew} handleNotification={handleNotification} />
+        </Route>
+        <Route path="/about">
+          <About />
+        </Route>
+        <Route path="/">
+          <AnecdoteList anecdotes={anecdotes} />
+        </Route>
+      </Switch>
+    </div>
   );
 
   return (
-    <div>
-      <h1>Software anecdotes</h1>
-      {notification ? <h4 style={{color:"red"}}>{notification}</h4> : null}
-      {routes}
-      <Footer />
-    </div>
+    <Router>
+      <div>
+        <h1>Software anecdotes</h1>
+        {notification ? <h4 style={{ color: "red" }}>{notification}</h4> : null}
+        {routes}
+        <Footer />
+      </div>
+    </Router>
   );
 };
 
