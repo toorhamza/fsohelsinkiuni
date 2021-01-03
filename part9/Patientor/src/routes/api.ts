@@ -16,4 +16,13 @@ router.get('/diagnose', (_req, res) => {
     res.json(diagnoses.getEntries());
   });
 
+  router.post('/patients', (req, res) => {
+    const { name, dateOfBirth, gender, ssn, occupation } = req.body;
+    const newPatient = patients.addPatient({name, dateOfBirth, gender, ssn, occupation})
+
+    res.json(newPatient);
+
+  });
+
+
 export default router;
