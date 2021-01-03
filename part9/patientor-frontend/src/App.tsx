@@ -20,6 +20,7 @@ const App: React.FC = () => {
           `${apiBaseUrl}/patients`
         );
         dispatch({ type: "SET_PATIENT_LIST", payload: patientListFromApi });
+        console.log("done")
       } catch (e) {
         console.error(e);
       }
