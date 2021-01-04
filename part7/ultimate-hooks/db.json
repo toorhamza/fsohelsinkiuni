@@ -1,0 +1,42 @@
+{
+  "notes": [
+    {
+      "content": "custom-hookit aivan mahtavia",
+      "id": 1
+    },
+    {
+      "content": "paras feature ikinä <3",
+      "id": 2
+    },
+    {
+      "content": "sdcsdcsdc",
+      "id": 3
+    },
+    {
+      "content": "dfvdfv",
+      "id": 4
+    }
+  ],
+  "persons": [
+    {
+      "name": "mluukkai",
+      "number": "040-5483923",
+      "id": 1
+    },
+    {
+      "name": "hamza",
+      "number": "156165165",
+      "id": 2
+    },
+    {
+      "name": "hamza",
+      "number": "156165165",
+      "id": 3
+    },
+    {
+      "name": "vdfv",
+      "number": "234234",
+      "id": 4
+    }
+  ]
+}
