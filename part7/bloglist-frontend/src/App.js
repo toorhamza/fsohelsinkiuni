@@ -7,26 +7,29 @@ import NewBlog from "./components/NewBlog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import storage from "./utils/storage";
-import { useDispatch } from "react-redux";
-import { addNotification, delNotification } from "./redux/actions";
+
+import { useDispatch, useSelector } from "react-redux";
+import { addNotification, delNotification, fetchAllBlogs, addBlog, deleteBlog, likeBlog, saveUserData, logout } from "./redux/actions";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+
+  const reduxBlogs = useSelector(state => state.blogs)
+ // const [blogs, setBlogs] = useState([]);
+  const user = useSelector(state => state.user)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [notification, setNotification] = useState(null);
-  const dispatch = useDispatch();
+//  const [notification, setNotification] = useState(null);
 
   const blogFormRef = React.createRef();
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((blogs) => dispatch(fetchAllBlogs(blogs)));
   }, []);
 
   useEffect(() => {
     const user = storage.loadUser();
-    setUser(user);
+    dispatch(saveUserData(user))
   }, []);
 
   const notifyWith = (message, type = "success") => {
@@ -50,7 +53,8 @@ const App = () => {
 
       setUsername("");
       setPassword("");
-      setUser(user);
+    //  setUser(user);
+      dispatch(saveUserData(user))
       notifyWith(`${user.name} welcome back!`);
       storage.saveUser(user);
     } catch (exception) {
@@ -62,7 +66,7 @@ const App = () => {
     try {
       const newBlog = await blogService.create(blog);
       blogFormRef.current.toggleVisibility();
-      setBlogs(blogs.concat(newBlog));
+      dispatch(addBlog(newBlog))
       notifyWith(`a new blog '${newBlog.title}' by ${newBlog.author} added!`);
     } catch (exception) {
       console.log(exception);
@@ -70,33 +74,29 @@ const App = () => {
   };
 
   const handleLike = async (id) => {
-    const blogToLike = blogs.find((b) => b.id === id);
+    const blogToLike = reduxBlogs.find((b) => b.id === id);
     const likedBlog = {
       ...blogToLike,
       likes: blogToLike.likes + 1,
       user: blogToLike.user.id,
     };
     await blogService.update(likedBlog);
-    setBlogs(
-      blogs.map((b) =>
-        b.id === id ? { ...blogToLike, likes: blogToLike.likes + 1 } : b
-      )
-    );
+    dispatch(likeBlog(id, blogToLike))
   };
 
   const handleRemove = async (id) => {
-    const blogToRemove = blogs.find((b) => b.id === id);
+    const blogToRemove = reduxBlogs.find((b) => b.id === id);
     const ok = window.confirm(
       `Remove blog ${blogToRemove.title} by ${blogToRemove.author}`
     );
     if (ok) {
       await blogService.remove(id);
-      setBlogs(blogs.filter((b) => b.id !== id));
+      dispatch(deleteBlog(id))
     }
   };
 
   const handleLogout = () => {
-    setUser(null);
+    dispatch(logout())
     storage.logoutUser();
   };
 
@@ -105,7 +105,7 @@ const App = () => {
       <div>
         <h2>login to application</h2>
 
-        <Notification notification={notification} />
+        <Notification /* notification={notification} */ />
 
         <form onSubmit={handleLogin}>
           <div>
@@ -136,7 +136,7 @@ const App = () => {
     <div>
       <h2>blogs</h2>
 
-      <Notification notification={notification} />
+      <Notification /* notification={notification}  *//>
 
       <p>
         {user.name} logged in <button onClick={handleLogout}>logout</button>
@@ -146,7 +146,7 @@ const App = () => {
         <NewBlog createBlog={createBlog} />
       </Togglable>
 
-      {blogs.sort(byLikes).map((blog) => (
+      {reduxBlogs.sort(byLikes).map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
