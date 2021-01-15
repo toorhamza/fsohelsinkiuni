@@ -3,23 +3,34 @@ import Blog from "./components/Blog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import NewBlog from "./components/NewBlog";
+import Users from "./components/Users";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import storage from "./utils/storage";
+import { Switch, Route } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addNotification, delNotification, fetchAllBlogs, addBlog, deleteBlog, likeBlog, saveUserData, logout } from "./redux/actions";
+import {
+  addNotification,
+  delNotification,
+  fetchAllBlogs,
+  addBlog,
+  deleteBlog,
+  likeBlog,
+  saveUserData,
+  logout,
+} from "./redux/actions";
 
 const App = () => {
   const dispatch = useDispatch();
 
-  const reduxBlogs = useSelector(state => state.blogs)
- // const [blogs, setBlogs] = useState([]);
-  const user = useSelector(state => state.user)
+  const reduxBlogs = useSelector((state) => state.blogs);
+  // const [blogs, setBlogs] = useState([]);
+  const user = useSelector((state) => state.user);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-//  const [notification, setNotification] = useState(null);
+  //  const [notification, setNotification] = useState(null);
 
   const blogFormRef = React.createRef();
 
@@ -29,7 +40,7 @@ const App = () => {
 
   useEffect(() => {
     const user = storage.loadUser();
-    dispatch(saveUserData(user))
+    dispatch(saveUserData(user));
   }, []);
 
   const notifyWith = (message, type = "success") => {
@@ -53,8 +64,8 @@ const App = () => {
 
       setUsername("");
       setPassword("");
-    //  setUser(user);
-      dispatch(saveUserData(user))
+      //  setUser(user);
+      dispatch(saveUserData(user));
       notifyWith(`${user.name} welcome back!`);
       storage.saveUser(user);
     } catch (exception) {
@@ -66,7 +77,7 @@ const App = () => {
     try {
       const newBlog = await blogService.create(blog);
       blogFormRef.current.toggleVisibility();
-      dispatch(addBlog(newBlog))
+      dispatch(addBlog(newBlog));
       notifyWith(`a new blog '${newBlog.title}' by ${newBlog.author} added!`);
     } catch (exception) {
       console.log(exception);
@@ -81,7 +92,7 @@ const App = () => {
       user: blogToLike.user.id,
     };
     await blogService.update(likedBlog);
-    dispatch(likeBlog(id, blogToLike))
+    dispatch(likeBlog(id, blogToLike));
   };
 
   const handleRemove = async (id) => {
@@ -91,12 +102,12 @@ const App = () => {
     );
     if (ok) {
       await blogService.remove(id);
-      dispatch(deleteBlog(id))
+      dispatch(deleteBlog(id));
     }
   };
 
   const handleLogout = () => {
-    dispatch(logout())
+    dispatch(logout());
     storage.logoutUser();
   };
 
@@ -130,13 +141,11 @@ const App = () => {
     );
   }
 
-  const byLikes = (b1, b2) => b2.likes - b1.likes;
-
-  return (
-    <div>
+  const loggedInView = () => (
+    <>
       <h2>blogs</h2>
 
-      <Notification /* notification={notification}  *//>
+      <Notification /* notification={notification}  */ />
 
       <p>
         {user.name} logged in <button onClick={handleLogout}>logout</button>
@@ -155,6 +164,19 @@ const App = () => {
           own={user.username === blog.user.username}
         />
       ))}
+    </>
+  );
+
+  const byLikes = (b1, b2) => b2.likes - b1.likes;
+
+  return (
+    <div>
+      <Switch>
+        <Route path="/users">
+          <Users user={user} handleLogout={handleLogout} />
+        </Route>
+        <Route path="/">{loggedInView}</Route>
+      </Switch>
     </div>
   );
 };
