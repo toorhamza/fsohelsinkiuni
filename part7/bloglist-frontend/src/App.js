@@ -6,6 +6,7 @@ import NewBlog from "./components/NewBlog";
 import Users from "./components/Users";
 import SingleUser from "./components/SingleUser";
 import SingleBlog from "./components/SingleBlog";
+import Navbar from "./components/Navbar"
 
 
 import blogService from "./services/blogs";
@@ -175,6 +176,7 @@ const App = () => {
 
   return (
     <div>
+      <Navbar user={user} handleLogout={handleLogout} />
       <Switch>
       <Route path="/users/:id">
           <SingleUser user={user} handleLogout={handleLogout} />
@@ -186,7 +188,6 @@ const App = () => {
           <Users user={user} handleLogout={handleLogout} />
         </Route>
         <Route path="/">{loggedInView}</Route>
-    
       </Switch>
     </div>
   );
