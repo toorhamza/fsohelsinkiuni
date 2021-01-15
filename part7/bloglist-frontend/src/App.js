@@ -6,14 +6,18 @@ import NewBlog from "./components/NewBlog";
 import Users from "./components/Users";
 import SingleUser from "./components/SingleUser";
 import SingleBlog from "./components/SingleBlog";
-import Navbar from "./components/Navbar"
+import Navbar from "./components/Navbar";
 
+import Button from "@material-ui/core/Button";
+import { Typography } from "@material-ui/core";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
 import storage from "./utils/storage";
 import { Switch, Route } from "react-router-dom";
+
+import "./App.css";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -140,7 +144,7 @@ const App = () => {
               onChange={({ target }) => setPassword(target.value)}
             />
           </div>
-          <button id="login">login</button>
+          <Button id="login">login</Button>
         </form>
       </div>
     );
@@ -148,13 +152,9 @@ const App = () => {
 
   const loggedInView = () => (
     <>
-      <h2>blogs</h2>
+      <Typography variant="h5">Blogs</Typography>
 
       <Notification /* notification={notification}  */ />
-
-      <p>
-        {user.name} logged in <button onClick={handleLogout}>logout</button>
-      </p>
 
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
         <NewBlog createBlog={createBlog} />
@@ -178,7 +178,7 @@ const App = () => {
     <div>
       <Navbar user={user} handleLogout={handleLogout} />
       <Switch>
-      <Route path="/users/:id">
+        <Route path="/users/:id">
           <SingleUser user={user} handleLogout={handleLogout} />
         </Route>
         <Route path="/blogs/:id">

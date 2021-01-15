@@ -1,54 +1,69 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    inputField: {
+      margin: theme.spacing(1),
+    },
+  },
+}));
 
 const NewBlog = (props) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+  const classes = useStyles();
 
   const handleNewBlog = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     props.createBlog({
-      title, author, url
-    })
+      title,
+      author,
+      url,
+    });
 
-    setTitle('')
-    setAuthor('')
-    setUrl('')
-  }
+    setTitle("");
+    setAuthor("");
+    setUrl("");
+  };
 
   return (
     <div>
       <h2>create new</h2>
       <form onSubmit={handleNewBlog}>
-        <div>
-          author
-          <input
-            id='author'
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          title
-          <input
-            id='title'
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          url
-          <input
-            id='url'
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button id="create">create</button>
+        <TextField className={classes.inputField}
+          id="outlined-helperText"
+          label="Author"
+          variant="outlined"
+          onChange={({ target }) => setAuthor(target.value)}
+        />
+        <TextField className={classes.inputField}
+          id="outlined-helperText"
+          label="Title"
+          variant="outlined"
+          onChange={({ target }) => setTitle(target.value)}
+        />
+        <TextField className={classes.inputField}
+          id="outlined-helperText"
+          label="Url"
+          variant="outlined"
+          onChange={({ target }) => setUrl(target.value)}
+        />
+        <Button
+          style={{ margin: "6px" }}
+          color="primary"
+          variant="contained"
+          id="create"
+        >
+          create
+        </Button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default NewBlog
+export default NewBlog;

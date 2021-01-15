@@ -23,9 +23,6 @@ const SingleBlog = ({ user, handleLogout }) => {
     <div>
       <h2>blogs</h2>
 
-      <p>
-        {user.name} logged in <button onClick={handleLogout}>logout</button>
-      </p>
 
       <h1>{currentBlog ? currentBlog.title: null}</h1>
       <a href={currentBlog? currentBlog.url: null}>{currentBlog ? currentBlog.title: null}</a>
