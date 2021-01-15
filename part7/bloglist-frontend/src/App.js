@@ -4,9 +4,11 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 import NewBlog from "./components/NewBlog";
 import Users from "./components/Users";
+import SingleUser from "./components/SingleUser";
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+
 import storage from "./utils/storage";
 import { Switch, Route } from "react-router-dom";
 
@@ -172,10 +174,14 @@ const App = () => {
   return (
     <div>
       <Switch>
+      <Route path="/users/:id">
+          <SingleUser user={user} handleLogout={handleLogout} />
+        </Route>
         <Route path="/users">
           <Users user={user} handleLogout={handleLogout} />
         </Route>
         <Route path="/">{loggedInView}</Route>
+    
       </Switch>
     </div>
   );

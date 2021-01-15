@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import userService from "../services/users";
+import { Switch, Route, Link } from "react-router-dom";
+import SingleUser from "./SingleUser";
 
 const Users = ({ user, handleLogout }) => {
   const [users, setUsers] = React.useState(null);
@@ -10,6 +12,7 @@ const Users = ({ user, handleLogout }) => {
 
   return (
     <div>
+
       <h2>blogs</h2>
 
       <p>
@@ -25,7 +28,7 @@ const Users = ({ user, handleLogout }) => {
         {users
           ? users.map((user, index) => (
               <tr>
-                <td>{user.name}</td>
+                <td><Link to={`/users/${user.id}`}>{user.name}</Link></td>
                 <td>{user.blogs.length}</td>
               </tr>
             ))
