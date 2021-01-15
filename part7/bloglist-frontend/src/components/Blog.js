@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { Switch, Route, Link } from "react-router-dom";
+
 
 const Blog = ({ blog, handleLike, handleRemove, own }) => {
   const [visible, setVisible] = useState(false)
@@ -17,7 +19,7 @@ const Blog = ({ blog, handleLike, handleRemove, own }) => {
   return (
     <div style={blogStyle} className='blog'>
       <div>
-        <i>{blog.title}</i> by {blog.author} <button onClick={() => setVisible(!visible)}>{label}</button>
+        <i><Link to ={`/blogs/${blog.id}`}>{blog.title}</Link></i> by {blog.author} <button onClick={() => setVisible(!visible)}>{label}</button>
       </div>
       {visible&&(
         <div>

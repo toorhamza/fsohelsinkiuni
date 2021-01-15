@@ -5,6 +5,8 @@ import Togglable from "./components/Togglable";
 import NewBlog from "./components/NewBlog";
 import Users from "./components/Users";
 import SingleUser from "./components/SingleUser";
+import SingleBlog from "./components/SingleBlog";
+
 
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -176,6 +178,9 @@ const App = () => {
       <Switch>
       <Route path="/users/:id">
           <SingleUser user={user} handleLogout={handleLogout} />
+        </Route>
+        <Route path="/blogs/:id">
+          <SingleBlog user={user} handleLogout={handleLogout} />
         </Route>
         <Route path="/users">
           <Users user={user} handleLogout={handleLogout} />
