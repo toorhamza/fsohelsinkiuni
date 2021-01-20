@@ -7,12 +7,11 @@ const schema = new mongoose.Schema({
     unique: true,
     minlength: 3
   },
-  friends: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Person'
-    }
-  ],
+  favouriteGenre: {
+    type:String,
+    minlength: 2
+
+  }
 })
 
 module.exports = mongoose.model('User', schema)

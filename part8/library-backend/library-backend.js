@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "testkey";
 
+
+
 const MONGODB_URI =
   "mongodb+srv://admin:QE1ecQGu4OeF7hgT@cluster0.xpj3y.mongodb.net/<dbname>?retryWrites=true&w=majority";
 
@@ -97,6 +99,10 @@ const resolvers = {
     authorCount: async () => await (await authors()).length,
     allBooks: async (root, args) => {
       const allBooks = await Book.find().populate("author").lean(true);
+      const genreBooks = await Book.find({ genres: {$in: [args.genre]}}).populate("author").lean(true)
+      if(args.genre) {
+        return genreBooks
+      }
       /*   const authorBooks = books.filter((o) => args.author ? o.author === args.author : o.author !== args.author)
       const genreBooks = books.filter((o) => args.genre ? o.genres.find(ob => {return args.genre === ob}) === args.genre : null)
       const bothParams = args.genre && args.author ? authorBooks.filter(o => o.genres.find(ob => {return args.genre === ob}) === args.genre) : null
@@ -157,8 +163,9 @@ const resolvers = {
           };
           added = await Author.create(newAuthor);
         }
-        const id = authorExist === 0 ? added._id : authorExist[0]._id;
+        const id = authorExist.length > 0 ? authorExist[0]._id : added._id;
         const book = { ...args, author: id };
+        console.log(id)
         await Book.create(book);
       } catch (error) {
         throw new UserInputError(error.message, {
@@ -180,7 +187,6 @@ const resolvers = {
           { $set: { born: args.setBornTo } },
           { returnOriginal: false }
         );
-        console.log(updateAuthor);
         if (updateAuthor === null) {
           throw new UserInputError(error.message, {
             invalidArgs: "Author not found",
@@ -204,7 +210,7 @@ const resolvers = {
       return updatedAuthor */
     },
     createUser: (root, args) => {
-      const user = new User({ username: args.username });
+      const user = new User({ username: args.username, favouriteGenre: args.favoriteGenre });
 
       return user.save().catch((error) => {
         throw new UserInputError(error.message, {
@@ -221,8 +227,10 @@ const resolvers = {
 
       const userForToken = {
         username: user.username,
-        id: user._id,
+        favouriteGenre: user.favouriteGenre,
+        id: user._id
       };
+
 
       return { value: jwt.sign(userForToken, JWT_SECRET) };
     },
