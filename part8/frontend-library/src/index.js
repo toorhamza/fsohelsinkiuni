@@ -6,34 +6,55 @@ import {
   ApolloProvider,
   createHttpLink,
   InMemoryCache,
+  HttpLink,
+  split
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
-
-const httpLink = createHttpLink({
-  uri: "http://localhost:4000/",
-});
-const token = localStorage.getItem("token");
-
+import { getMainDefinition } from '@apollo/client/utilities'
+import { WebSocketLink } from '@apollo/link-ws'
+const token = localStorage.getItem('token')
 
 const authLink = setContext((_, { headers }) => {
-  // get the authentication token from local storage if it exists
-  // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : "",
-    },
-  };
-});
+      authorization: token ? `bearer ${token}` : null,
+    }
+  }
+})
+
+const httpLink = new HttpLink({
+  uri: 'http://localhost:4000',
+})
+
+
+const wsLink = new WebSocketLink({
+  uri: 'ws://localhost:4000/graphql',
+  options: {
+    reconnect: true
+  }
+})
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query)
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  authLink.concat(httpLink),
+)
 
 const client = new ApolloClient({
-  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
-});
+  link: splitLink
+})
 
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <App tokens={token} />
-  </ApolloProvider>,
-  document.getElementById("root")
-);
+    <App tokens={token}/>
+  </ApolloProvider>, 
+  document.getElementById('root')
+)

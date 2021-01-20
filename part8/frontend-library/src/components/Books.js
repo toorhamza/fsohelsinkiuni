@@ -13,7 +13,6 @@ const Books = (props) => {
   }
 
   const books = bookResults.loading ? [] : bookResults.data.allBooks
-  console.log(books)
   const genres = books.length > 0 ? books.map(i => i.genres) : null
   const allGenres = genres instanceof Array ? genres.flatMap(i => i) : null
 

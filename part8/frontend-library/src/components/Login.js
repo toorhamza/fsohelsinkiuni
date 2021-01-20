@@ -17,7 +17,6 @@ const Login = ({ setError, setToken, show, parseJwt }) => {
       const token = result.data.login.value;
       setToken(token);
       parseJwt(token)
-      setError("")
       localStorage.setItem("token", token);
     }
   }, [result.data]); // eslint-disable-line

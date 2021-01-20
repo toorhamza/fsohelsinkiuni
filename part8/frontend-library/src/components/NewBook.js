@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { useMutation } from '@apollo/client'
-import {ADD_BOOK,ALL_BOOKS} from '../queries.js'
+import React, { useState, useEffect } from 'react'
+import { useMutation, useSubscription } from '@apollo/client'
+import {ADD_BOOK,ALL_BOOKS,BOOK_ADDED} from '../queries.js'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('The book')
@@ -12,6 +12,14 @@ const NewBook = (props) => {
     refetchQueries: [  {query: ALL_BOOKS} ]
   })
 
+  const { loading, error, data } = useSubscription(
+    BOOK_ADDED,
+    {
+      onSubscriptionData: ({ subscriptionData: { data } }) => {
+        alert(data + "Added successfully")
+      }
+    },  
+  )
   if (!props.show) {
     return null
   }
@@ -20,9 +28,7 @@ const NewBook = (props) => {
     event.preventDefault()
 
     createBook({  variables: { title, author, published, genres } })
-    
-    console.log('add book...')
-
+  
     setTitle('')
     setPublished('')
     setAuhtor('')
