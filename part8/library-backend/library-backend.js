@@ -5,8 +5,7 @@ const Book = require("./model/books");
 const Author = require("./model/author");
 const User = require("./model/user");
 const jwt = require("jsonwebtoken");
-const { PubSub } = require('apollo-server');
-const { aggregate } = require("./model/books");
+const { PubSub } = require('apollo-server')
 
 const pubsub = new PubSub()
 
@@ -168,23 +167,14 @@ const resolvers = {
           const newAuthor = {
             name: args.author,
             born: null,
-            books: []
           };
           added = await Author.create(newAuthor);
         }
         const id = authorExist.length > 0 ? authorExist[0]._id : added._id;
         const book = { ...args, author: id };
         await Book.create(book);
-        const newBook = await Book.find({title: args.title}).populate("author").lean(true)
         
-  /*       const updateAuthor = await Author.find({ name: args.author })
-        debugger
-        await updateAuthor[0].books.push(newBook[0]._id)
-        await updateAuthor.save() */
-        debugger
-        Author.update(
-          { name: args.author }, 
-          { $push: { books: newBook[0]._id } });
+        const newBook = await Book.find({title: args.title}).populate("author").lean(true)
         await pubsub.publish('BOOK_ADDED', {bookAdded: newBook})
         return newBook;
       } catch (error) {
