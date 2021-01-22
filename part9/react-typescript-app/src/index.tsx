@@ -11,23 +11,27 @@ interface CoursePartBase {
   exerciseCount: number;
 }
 
-interface CoursePartOne extends CoursePartBase {
-  name: "Fundamentals";
-  description: string;
+interface CoursePartFour extends CoursePartBase {
+  description?: string;
+  groupProjectCount?: number;
+  exerciseSubmissionLink?: string;
 }
 
-interface CoursePartTwo extends CoursePartBase {
+interface CoursePartOne extends CoursePartFour {
+  name: "Fundamentals";
+}
+
+interface CoursePartTwo extends CoursePartFour {
   name: "Using props to pass data";
   groupProjectCount: number;
 }
 
-interface CoursePartThree extends CoursePartBase {
+interface CoursePartThree extends CoursePartFour {
   name: "Deeper type usage";
-  description: string;
   exerciseSubmissionLink: string;
 }
 
-type CoursePart = CoursePartOne | CoursePartTwo | CoursePartThree;
+export type CoursePart = CoursePartOne | CoursePartTwo | CoursePartThree | CoursePartFour;
 
 const App: React.FC = () => {
   const courseName = "Half Stack application development";
@@ -46,7 +50,7 @@ const App: React.FC = () => {
       name: "Deeper type usage",
       exerciseCount: 14,
       description: "Confusing description",
-      exerciseSubmissionLink: "https://fake-exercise-submit.made-up-url.dev"
+      exerciseSubmissionLink: "https://fake-exercise-submit.made-up-url.dev",
     }
   ];
 

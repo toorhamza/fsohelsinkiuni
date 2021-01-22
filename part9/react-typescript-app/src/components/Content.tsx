@@ -1,25 +1,23 @@
 import React, { FC } from "react";
+import Part from "./Part"
+import { CoursePart } from "../index"
+
 
 interface courseParts {
-    name: string;
-    exerciseCount: number;
+  name: string;
+  exerciseCount: number;
 }
 
 interface ContentProps {
-    courseParts: courseParts[]
+  courseParts: CoursePart[];
 }
 
-const Content: FC<ContentProps> = ({ courseParts }) => {
+const Content: FC<{ courseParts: CoursePart[] }> = ({ courseParts }) => {
   return (
     <div>
-      {courseParts
-        ? courseParts.map((i, num) => (
-            <p key={num}>
-              {" "}
-              {i.name} {i.exerciseCount}
-            </p>
-          ))
-        : null}
+       {courseParts.map((part, i) => (
+        <Part key={i} course={part} />
+      ))}
     </div>
   );
 };
