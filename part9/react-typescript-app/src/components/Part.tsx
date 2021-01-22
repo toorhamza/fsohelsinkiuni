@@ -7,7 +7,11 @@ const assertNever = (value: never): never => {
   );
 };
 
-const Part: FC<{ course: CoursePart }> = ({ course }) => {
+interface PartProps {
+    course: CoursePart
+}
+
+const Part: FC<PartProps> = ({ course }) => {
   switch (course.name) {
     case "Fundamentals":
       return (
