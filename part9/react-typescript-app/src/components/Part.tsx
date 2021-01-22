@@ -45,6 +45,16 @@ const Part: FC<{ course: CoursePart }> = ({ course }) => {
           </p>
         </>
       );
+      case "Advanced Typescript":
+        return (
+          <>
+            <p>{course.name}</p>
+            {course.description && <p>{course.description}</p>}
+            <p>
+              Exercises: <strong>{course.exerciseCount}</strong>
+            </p>
+          </>
+        );
     default:
       return assertNever(course);
   }
