@@ -6,25 +6,30 @@ import { Button, Divider, Header, Container } from "semantic-ui-react";
 import { apiBaseUrl } from "./constants";
 import { useStateValue } from "./state";
 import { Patient } from "./types";
+import { setPatientList} from "./state/reducer"
 
 import PatientListPage from "./PatientListPage";
+import SinglePatient from "./SinglePatient";
 
 const App: React.FC = () => {
   const [, dispatch] = useStateValue();
+
+  const fetchPatientList = async () => {
+    try {
+      const { data: patientListFromApi } = await axios.get<Patient[]>(
+        `${apiBaseUrl}/patients`
+      );
+      dispatch(setPatientList(patientListFromApi));
+      console.log("done");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   React.useEffect(() => {
     axios.get<void>(`${apiBaseUrl}/ping`);
 
-    const fetchPatientList = async () => {
-      try {
-        const { data: patientListFromApi } = await axios.get<Patient[]>(
-          `${apiBaseUrl}/patients`
-        );
-        dispatch({ type: "SET_PATIENT_LIST", payload: patientListFromApi });
-        console.log("done")
-      } catch (e) {
-        console.error(e);
-      }
-    };
+    
     fetchPatientList();
   }, [dispatch]);
 
@@ -33,12 +38,16 @@ const App: React.FC = () => {
       <Router>
         <Container>
           <Header as="h1">Patientor</Header>
-          <Button as={Link} to="/" primary>
+          <Button onClick={fetchPatientList} as={Link} to="/" primary>
             Home
           </Button>
           <Divider hidden />
           <Switch>
-            <Route path="/" render={() => <PatientListPage />} />
+          <Route path="/" exact>
+              <PatientListPage />
+            </Route>            <Route path="/patients/:id">
+              <SinglePatient />
+            </Route>
           </Switch>
         </Container>
       </Router>
