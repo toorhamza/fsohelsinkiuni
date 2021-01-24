@@ -5,9 +5,10 @@ import { Icon } from "semantic-ui-react";
 
 import { useStateValue } from "../state";
 
-import { Patient } from "../types";
+import { Patient, Entry } from "../types";
 import { apiBaseUrl } from "../constants";
 import { setSinglePatient } from "../state/reducer"
+import Entries from "./Entries";
 
 const SinglePatient: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,6 +48,8 @@ const SinglePatient: React.FC = () => {
       <p>
         Occupation: {patient.occupation}
       </p>
+      {patient.entries ? patient.entries.map(i => <Entries key={i.id} entry={i} />) : null}
+      
 </>
           )
       }) : null}

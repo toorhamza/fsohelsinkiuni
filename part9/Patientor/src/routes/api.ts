@@ -1,6 +1,7 @@
 import express from 'express';
 import diagnoses from '../services/diagnoses'
 import patients from '../services/patients'
+import { Entry } from '../types';
 
 const router = express.Router();
 
@@ -36,6 +37,19 @@ router.get('/diagnose', (_req, res) => {
       res.json(patient);
     } else {
       res.status(404).end();
+    }
+  });
+
+  router.post('/patients/:id/entries', (req, res)  => {
+    const { id } = req.params;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const newEntry: Entry = req.body;
+    try {
+      const addedEntry = patients.addNewEntry(id, newEntry);
+      res.json(addedEntry);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Undefined error';
+      res.status(400).send(errorMessage);
     }
   });
 

@@ -1,14 +1,16 @@
-import patients from "../../data/patients.json";
+import patients from "../patients";
 
-import { PublicPatient, Patient,EntryPatient } from "../types";
+import { PublicPatient, Patient,EntryPatient, Entry } from "../types";
 import toNewPatient from "../utils"
 
+const patientsArray: Patient[] = patients;
+
 const getEntries = (): PublicPatient[] => {
-  return patients;
+  return patientsArray;
 };
 
 const getNonSensitiveData = (): PublicPatient[] => {
-  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+  return patientsArray.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
     dateOfBirth,
@@ -24,19 +26,36 @@ const addPatient = (entry: EntryPatient): Patient => {
     ...validatePatient
   };
 
-  patients.push(newPatient);
+  patientsArray.push(newPatient);
   return newPatient;
 };
 
 const findPatientById = (id: any): EntryPatient | undefined => {
-  const patient = patients.find((p) => p.id === id);
+  const patient: Patient | undefined = patientsArray.find((p) => p.id === id);
   return patient;
 }
+
+const addNewEntry = (id: string, entry: Entry): Entry => {
+  const patient: Patient | undefined = patientsArray.find((p) => p.id === id);
+  if (!patient) {
+    throw new Error(`Incorrect patient id`);
+  }
+
+  const newEntry: Entry = {...entry, id:Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15), }
+
+
+  patient.entries?.push(newEntry);
+
+  console.log(patient.entries)
+
+  return entry;
+};
 
 
 export default {
   getEntries,
   getNonSensitiveData,
   addPatient,
-  findPatientById
+  findPatientById,
+  addNewEntry
 };
